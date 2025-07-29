@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../application/models/search_history_item.dart';
 
 class LocalStorageHelper {
   static final LocalStorageHelper _instance = LocalStorageHelper._();
@@ -65,14 +69,54 @@ class LocalStorageHelper {
     await setStringList(_keyInstance, currentList);
   }
 
+  Future<List<SearchHistoryItem>> getLastSearchedItems() async {
+    final jsonList = getStringList(_keyInstance) ?? []; //bunlar json stringi
+    return jsonList //önce decode ile map nesnesine dönüştür
+        //fromjson ile de SearchHistoryIteme dönüştür
+        .map((e) => SearchHistoryItem.fromJson(jsonDecode(e)))
+        .toList();
+  }
+
+  Future<void> addSearchedItem(SearchHistoryItem item) async {
+    if (_preferences == null) return;
+
+    List<SearchHistoryItem> currentList = await getLastSearchedItems();
+
+    currentList.removeWhere((e) => e.word == item.word);
+    currentList.insert(0, item);
+
+    if (currentList.length > _maxWords) {
+      currentList = currentList.sublist(0, _maxWords);
+    }
+
+    final jsonList = //önce SearchHistoryItemı jsona dönüştürp sonra onu da stringe çevir
+        currentList.map((e) => jsonEncode(e.toJson())).toList();
+
+    await setStringList(_keyInstance, jsonList);
+  }
+
   Future<void> clearSearchedWords() async {
     await remove(_keyInstance);
   }
 
   Future<void> removeWord(String word) async {
-    final words = getLastSearchedWords();
-    words.remove(word);
-    await setStringList(_keyInstance, words);
+    if (_preferences == null) return;
+
+    List<SearchHistoryItem> currentList = await getLastSearchedItems();
+    List<SearchHistoryItem> updatedList = [];
+
+    for (int i = 0; i < currentList.length; i++) {
+      SearchHistoryItem item = currentList[i];
+      if (item.word != word) {
+        updatedList.add(item);
+      }
+    }
+    currentList = updatedList;
+
+    // SearchHistoryItem listesini tekrar json string'lerine dönüştür ki setstring yapabil.
+    final jsonList = currentList.map((e) => jsonEncode(e.toJson())).toList();
+
+    await setStringList(_keyInstance, jsonList);
   }
 
   Future<void> removeFavWord(String word) async {
