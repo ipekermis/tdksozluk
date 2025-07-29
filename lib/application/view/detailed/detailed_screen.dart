@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tdksozluk/application/models/tdk_models.dart';
+import 'package:tdksozluk/application/view/detailed/build_button.dart';
+
+import '../bottom_nav_bar.dart';
 
 class DetailScreen extends StatelessWidget {
   final Madde madde;
@@ -35,9 +38,7 @@ class DetailScreen extends StatelessWidget {
                           Icons.arrow_back,
                           color: Colors.white,
                         ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
+                        onPressed: () => _onTapBack(context)
                       ),
                       const Text(
                         "Geri",
@@ -86,10 +87,10 @@ class DetailScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildButton(Icons.volume_up, 'Dinle'),
-                      _buildButton(Icons.back_hand, 'El İşareti'),
-                      _buildButton(Icons.star_border, 'Kaydet'),
-                      _buildButton(Icons.copy, 'Kopyala'),
+                      BuildButton(icon:Icons.volume_up,label:  'Dinle'),
+                      BuildButton(icon:Icons.back_hand,label:  'El İşareti'),
+                      BuildButton(icon:Icons.star_border, label: 'Kaydet'),
+                      BuildButton(icon:Icons.copy, label: 'Kopyala'),
                     ],
                   ),
                 ],
@@ -219,52 +220,13 @@ class DetailScreen extends StatelessWidget {
               const Center(child: Text('Bu kelime için anlam bulunamadı.')),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-
-          selectedItemColor: Color(0xFFCC2041),
-          unselectedItemColor: Colors.grey,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          currentIndex: 1,
-
-
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Anasayfa'),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Ara'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.star_border),
-              label: 'Kayıtlı',
-            ),
-            BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Geçmiş'),
-          ],
-        ),
+        bottomNavigationBar: BottomNavBar(ind: 1),
       ),
     );
   }
-
-  Widget _buildButton(IconData icon, String label) {
-    return Container(
-      width: 60,
-      height: 70,
-      //padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Color(0xFFA51D3D),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-
-        children: [
-          Icon(icon, color: Colors.white, size: 28),
-          SizedBox(height: 5),
-
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, color: Colors.white),
-          ),
-        ],
-      ),
-    );
+  void _onTapBack(context){
+    Navigator.pop(context);
   }
+
+
 }
