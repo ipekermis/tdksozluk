@@ -177,7 +177,13 @@ class AnlamDto {
     );
   }
   Anlam toAnlam() {
-    return Anlam(anlam: anlam);
+    return Anlam(
+      anlam: anlam,
+      anlamSira: anlamSira,
+      // DTO'daki listeler boş olmadığı için burada direkt aktarabiliriz
+      orneklerListe: orneklerListe.map((e) => e.toOrnek()).toList(),
+      ozelliklerListe: ozelliklerListe.map((e) => e.toOzellik()).toList(),
+    );
   }
 
   Map<String, dynamic> toJson() => {
@@ -234,6 +240,12 @@ class OrnekDto {
       yazar: parsedYazarList,
     );
   }
+  Ornek toOrnek() {
+    return Ornek(
+      ornek: ornek,
+      yazar: yazar.map((e) => e.toYazar()).toList(), // Yazar aktarıldı
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "ornek_id": ornekId,
@@ -266,6 +278,9 @@ class YazarDto {
     kisaAdi: json["kisa_adi"] as String?,
     ekno: json["ekno"] as String?,
   );
+  Yazar toYazar() {
+    return Yazar(tamAdi: tamAdi);
+  }
 
   Map<String, dynamic> toJson() => {
     "yazar_id": yazarId,
@@ -297,6 +312,9 @@ class OzellikDto {
     kisaAdi: json["kisa_adi"] as String?,
     ekno: json["ekno"] as String?,
   );
+  Ozellik toOzellik() {
+    return Ozellik(tamAdi: tamAdi);
+  }
 
   Map<String, dynamic> toJson() => {
     "ozellik_id": ozellikId,
